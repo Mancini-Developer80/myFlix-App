@@ -18,6 +18,7 @@
   "homepage": "https://github.com/Mancini-Developer80/myFlix-App#readme",
   "dependencies": {
     "body-parser": "^1.20.3",
-    "express": "^4.21.2"
+    "express": "^4.21.2",
+    "morgan": "^1.10.0"
   }
 }

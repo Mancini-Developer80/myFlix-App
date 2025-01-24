@@ -1,0 +1,40 @@
+[
+  { "title": "La Dolce Vita", "year": 1960, "director": "Federico Fellini" },
+  {
+    "title": "Ladri di biciclette (Bicycle Thieves)",
+    "year": 1948,
+    "director": "Vittorio De Sica"
+  },
+  {
+    "title": "Nuovo Cinema Paradiso (Cinema Paradiso)",
+    "year": 1988,
+    "director": "Giuseppe Tornatore"
+  },
+  {
+    "title": "La vita è bella (Life is Beautiful)",
+    "year": 1997,
+    "director": "Roberto Benigni"
+  },
+  { "title": "8½", "year": 1963, "director": "Federico Fellini" },
+  {
+    "title": "Il conformista (The Conformist)",
+    "year": 1970,
+    "director": "Bernardo Bertolucci"
+  },
+  {
+    "title": "Roma, città aperta (Rome, Open City)",
+    "year": 1945,
+    "director": "Roberto Rossellini"
+  },
+  {
+    "title": "Il gattopardo (The Leopard)",
+    "year": 1963,
+    "director": "Luchino Visconti"
+  },
+  { "title": "Amarcord", "year": 1973, "director": "Federico Fellini" },
+  {
+    "title": "La grande bellezza (The Great Beauty)",
+    "year": 2013,
+    "director": "Paolo Sorrentino"
+  }
+]
