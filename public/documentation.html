@@ -3,17 +3,101 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./css/style.css" />
     <title>my Flix API | Documentation</title>
   </head>
   <body>
     <h1 class="main">My Flix API documentation</h1>
     <section class="intro">
-      <h2>Welcome!</h2>
-      <p>
-        Welcome to the documentation for myFlix API. Here you will find all the
-        information you need to interact with the API and access the data stored
-        in the database.
-      </p>
+      <div class="container">
+        <h2>Welcome!</h2>
+        <p>
+          Welcome to the documentation for myFlix API. Here you will find all
+          the information you need to interact with the API and access the data
+          stored in the database.
+        </p>
+        <table>
+          <thead>
+            <tr>
+              <th>API endpoints</th>
+              <th>Methods</th>
+              <th>Request</th>
+              <th>Response</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>/movies</td>
+              <td>GET</td>
+              <td>none</td>
+              <td>Returns a list of all movies to the user.</td>
+            </tr>
+            <tr>
+              <td>/movies/title/:title</td>
+              <td>GET</td>
+              <td>title</td>
+              <td>
+                Returns data (description, genre, director, image URL, whether
+                it’s featured or not) about a single movie by title to the user.
+              </td>
+            </tr>
+            <tr>
+              <td>/genres/:name</td>
+              <td>GET</td>
+              <td>name</td>
+              <td>Returns data (description) about a genre by name/title.</td>
+            </tr>
+            <tr>
+              <td>/directors/:name</td>
+              <td>GET</td>
+              <td>name</td>
+              <td>
+                Returns data (bio, birth year, death year) about a director by
+                name.
+              </td>
+            </tr>
+            <tr>
+              <td>/users/register</td>
+              <td>POST</td>
+              <td>username, password, email</td>
+              <td>Allows new users to register.</td>
+            </tr>
+            <tr>
+              <td>/users/update</td>
+              <td>PUT</td>
+              <td>username</td>
+              <td>Allows users to update their user info (username).</td>
+            </tr>
+            <tr>
+              <td>/users/favorites/:title</td>
+              <td>POST</td>
+              <td>title</td>
+              <td>
+                Allows users to add a movie to their list of favorites (showing
+                only a text that a movie has been added).
+              </td>
+            </tr>
+            <tr>
+              <td>/users/favorites/:title</td>
+              <td>DELETE</td>
+              <td>title</td>
+              <td>
+                Allows users to remove a movie from their list of favorites
+                (showing only a text that a movie has been removed).
+              </td>
+            </tr>
+            <tr>
+              <td>/users/deregister</td>
+              <td>DELETE</td>
+              <td>email</td>
+              <td>
+                Allows existing users to deregister (showing only a text that a
+                user email has been removed).
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </section>
   </body>
 </html>
