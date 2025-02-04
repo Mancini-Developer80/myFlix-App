@@ -18,8 +18,11 @@
   "homepage": "https://github.com/Mancini-Developer80/myFlix-App#readme",
   "dependencies": {
     "body-parser": "^1.20.3",
+    "dotenv": "^16.4.7",
     "express": "^4.21.2",
-    "morgan": "^1.10.0"
+    "mongoose": "^8.9.6",
+    "morgan": "^1.10.0",
+    "uuid": "^11.0.5"
   },
   "devDependencies": {
     "nodemon": "^3.1.9"

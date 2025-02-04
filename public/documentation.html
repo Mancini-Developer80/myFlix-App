@@ -27,73 +27,96 @@
           </thead>
           <tbody>
             <tr>
-              <td>/movies</td>
+              <td>/users</td>
               <td>GET</td>
-              <td>none</td>
-              <td>Returns a list of all movies to the user.</td>
+              <td>None</td>
+              <td>Returns a list of all users</td>
             </tr>
             <tr>
-              <td>/movies/title/:title</td>
+              <td>/users/:id</td>
               <td>GET</td>
-              <td>title</td>
+              <td>None</td>
+              <td>Returns data about a single user by ID</td>
+            </tr>
+            <tr>
+              <td>/users</td>
+              <td>POST</td>
               <td>
-                Returns data (description, genre, director, image URL, whether
-                it’s featured or not) about a single movie by title to the user.
+                JSON: { "username": "string", "email": "string", "password":
+                "string" }
               </td>
+              <td>Registers a new user</td>
+            </tr>
+            <tr>
+              <td>/users/:id</td>
+              <td>PUT</td>
+              <td>
+                JSON: { "username": "string", "email": "string", "password":
+                "string" }
+              </td>
+              <td>Updates user info by ID</td>
+            </tr>
+            <tr>
+              <td>/users/:id/movies/:movieTitle</td>
+              <td>POST</td>
+              <td>None</td>
+              <td>Adds a movie to a user's list of favorites</td>
+            </tr>
+            <tr>
+              <td>/users/:id/movies/:movieTitle</td>
+              <td>DELETE</td>
+              <td>None</td>
+              <td>Removes a movie from a user's list of favorites</td>
+            </tr>
+            <tr>
+              <td>/users/:id</td>
+              <td>DELETE</td>
+              <td>None</td>
+              <td>Deregisters an existing user</td>
+            </tr>
+            <tr>
+              <td>/movies</td>
+              <td>GET</td>
+              <td>None</td>
+              <td>Returns a list of all movies</td>
+            </tr>
+            <tr>
+              <td>/movies/:title</td>
+              <td>GET</td>
+              <td>None</td>
+              <td>Returns data about a single movie by title</td>
             </tr>
             <tr>
               <td>/genres/:name</td>
               <td>GET</td>
-              <td>name</td>
-              <td>Returns data (description) about a genre by name/title.</td>
+              <td>None</td>
+              <td>Returns data about a genre by name</td>
             </tr>
             <tr>
               <td>/directors/:name</td>
               <td>GET</td>
-              <td>name</td>
-              <td>
-                Returns data (bio, birth year, death year) about a director by
-                name.
-              </td>
+              <td>None</td>
+              <td>Returns data about a director by name</td>
             </tr>
             <tr>
-              <td>/users/register</td>
+              <td>/directors</td>
               <td>POST</td>
-              <td>username, password, email</td>
-              <td>Allows new users to register.</td>
+              <td>
+                JSON: { "Name": "string", "Bio": "string", "Birth": "date",
+                "Death": "date" }
+              </td>
+              <td>Adds a new director</td>
             </tr>
             <tr>
-              <td>/users/update</td>
-              <td>PUT</td>
-              <td>username</td>
-              <td>Allows users to update their user info (username).</td>
-            </tr>
-            <tr>
-              <td>/users/favorites/:title</td>
+              <td>/movies</td>
               <td>POST</td>
-              <td>title</td>
               <td>
-                Allows users to add a movie to their list of favorites (showing
-                only a text that a movie has been added).
+                JSON: { "Title": "string", "Description": "string", "Genre": {
+                "Name": "string", "Description": "string" }, "Director": {
+                "Name": "string", "Bio": "string", "Birth": "date", "Death":
+                "date" }, "ImageURL": "string", "Featured": "boolean" }
               </td>
-            </tr>
-            <tr>
-              <td>/users/favorites/:title</td>
-              <td>DELETE</td>
-              <td>title</td>
-              <td>
-                Allows users to remove a movie from their list of favorites
-                (showing only a text that a movie has been removed).
-              </td>
-            </tr>
-            <tr>
-              <td>/users/deregister</td>
-              <td>DELETE</td>
-              <td>email</td>
-              <td>
-                Allows existing users to deregister (showing only a text that a
-                user email has been removed).
-              </td>
+              <td>Adds a new movie</td>
             </tr>
           </tbody>
         </table>
