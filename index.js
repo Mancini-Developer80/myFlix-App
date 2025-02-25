@@ -7,14 +7,18 @@ const passport = require("passport");
 const dotenv = require("dotenv");
 const bcrypt = require("bcrypt");
 
-dotenv.config();
+if (process.env.NODE_ENV !== "production") {
+  dotenv.config();
+}
+
+// dotenv.config();
 
 const { Movie, Genre, Director } = require("./models/movies");
 const User = require("./models/users");
 const login = require("./auth");
 
 const app = express();
-const port = 8080;
+const port = process.env.PORT || 8080;
 
 // Connect to MongoDB Atlas using environment variables
 const dbUser = process.env.DB_USER;
