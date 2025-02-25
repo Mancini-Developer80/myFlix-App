@@ -11,8 +11,6 @@ if (process.env.NODE_ENV !== "production") {
   dotenv.config();
 }
 
-// dotenv.config();
-
 const { Movie, Genre, Director } = require("./models/movies");
 const User = require("./models/users");
 const login = require("./auth");
@@ -23,8 +21,9 @@ const port = process.env.PORT || 8080;
 // Connect to MongoDB Atlas using environment variables
 const dbUser = process.env.DB_USER;
 const dbPassword = process.env.DB_PASSWORD;
+const connectionURI = process.env.CONNECTION_URI;
 
-const dbURI = `mongodb+srv://${dbUser}:${dbPassword}@myflixtest.tarpb.mongodb.net/`;
+const dbURI = connectionURI.replace("<db_password>", dbPassword);
 
 mongoose.connect(dbURI);
 
@@ -54,7 +53,7 @@ app.use((req, res, next) => {
 });
 
 app.get("/", (req, res) => {
-  res.send("Welcome to myFlix!"); // This is the response
+  res.send("Welcome to myFlix!");
 });
 
 // Return a list of ALL users (admin only)
@@ -62,7 +61,6 @@ app.get(
   "/users",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
-    // Check if the authenticated user is an admin
     if (!req.user.isAdmin) {
       return res.status(403).send("Access denied. Admins only.");
     }
