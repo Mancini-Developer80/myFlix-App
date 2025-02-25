@@ -53,7 +53,9 @@ app.use((req, res, next) => {
   next();
 });
 
-// User routes
+app.get("/", (req, res) => {
+  res.send("Welcome to myFlix!"); // This is the response
+});
 
 // Return a list of ALL users (admin only)
 app.get(
