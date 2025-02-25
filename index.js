@@ -3,9 +3,9 @@ const morgan = require("morgan");
 const fs = require("fs");
 const path = require("path");
 const mongoose = require("mongoose");
-
 const passport = require("passport");
 const dotenv = require("dotenv");
+const bcrypt = require("bcrypt");
 
 dotenv.config();
 
@@ -20,7 +20,7 @@ const port = 8080;
 const dbUser = process.env.DB_USER;
 const dbPassword = process.env.DB_PASSWORD;
 
-const dbURI = `mongodb+srv://giuseppemancini80:${dbPassword}@myflixtest.tarpb.mongodb.net/`;
+const dbURI = `mongodb+srv://${dbUser}:${dbPassword}@myflixtest.tarpb.mongodb.net/`;
 
 mongoose.connect(dbURI);
 
@@ -37,7 +37,6 @@ app.use(express.static("public"));
 
 app.use(passport.initialize());
 
-const auth = require("./auth");
 app.post("/login", login);
 
 app.use((req, res, next) => {
@@ -52,15 +51,24 @@ app.use((req, res, next) => {
 
 // User routes
 
-// Return a list of ALL users
-app.get("/users", async (req, res) => {
-  try {
-    const users = await User.find();
-    res.status(200).json(users);
-  } catch (err) {
-    res.status(500).send(err.message);
+// Return a list of ALL users (admin only)
+app.get(
+  "/users",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    // Check if the authenticated user is an admin
+    if (!req.user.isAdmin) {
+      return res.status(403).send("Access denied. Admins only.");
+    }
+
+    try {
+      const users = await User.find();
+      res.status(200).json(users);
+    } catch (err) {
+      res.status(500).send(err.message);
+    }
   }
-});
+);
 
 // GET a user
 app.get(
@@ -87,10 +95,11 @@ app.post("/users", async (req, res) => {
     return res.status(400).send("All fields are required");
   } else {
     try {
+      const hashedPassword = bcrypt.hashSync(password, 10);
       const newUser = new User({
         username,
         email,
-        password,
+        password: hashedPassword,
         favoriteMovies: [],
       });
       const savedUser = await newUser.save();
@@ -186,6 +195,24 @@ app.delete(
         return res.status(404).send("User not found");
       }
       res.status(200).send("User deregistered");
+    } catch (err) {
+      res.status(500).send(err.message);
+    }
+  }
+);
+
+// Return a user's favorite movies
+app.get(
+  "/users/:id/favoriteMovies",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    const { id } = req.params;
+    try {
+      const user = await User.findById(id).populate("favoriteMovies");
+      if (!user) {
+        return res.status(404).send("User not found");
+      }
+      res.status(200).json(user.favoriteMovies);
     } catch (err) {
       res.status(500).send(err.message);
     }

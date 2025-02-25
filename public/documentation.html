@@ -3,124 +3,319 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="./css/style.css" />
-    <title>my Flix API | Documentation</title>
+    <title>API Documentation</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px auto;
+        max-width: 800px;
+      }
+      h1,
+      h2,
+      h3 {
+        color: #333;
+      }
+      pre {
+        background-color: #f4f4f4;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+      }
+    </style>
   </head>
   <body>
-    <h1 class="main">My Flix API documentation</h1>
-    <section class="intro">
-      <div class="container">
-        <h2>Welcome!</h2>
-        <p>
-          Welcome to the documentation for myFlix API. Here you will find all
-          the information you need to interact with the API and access the data
-          stored in the database.
-        </p>
-        <table>
-          <thead>
-            <tr>
-              <th>API endpoints</th>
-              <th>Methods</th>
-              <th>Request</th>
-              <th>Response</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>/users</td>
-              <td>GET</td>
-              <td>None</td>
-              <td>Returns a list of all users</td>
-            </tr>
-            <tr>
-              <td>/users/:id</td>
-              <td>GET</td>
-              <td>None</td>
-              <td>Returns data about a single user by ID</td>
-            </tr>
-            <tr>
-              <td>/users</td>
-              <td>POST</td>
-              <td>
-                JSON: { "username": "string", "email": "string", "password":
-                "string" }
-              </td>
-              <td>Registers a new user</td>
-            </tr>
-            <tr>
-              <td>/users/:id</td>
-              <td>PUT</td>
-              <td>
-                JSON: { "username": "string", "email": "string", "password":
-                "string" }
-              </td>
-              <td>Updates user info by ID</td>
-            </tr>
-            <tr>
-              <td>/users/:id/movies/:movieTitle</td>
-              <td>POST</td>
-              <td>None</td>
-              <td>Adds a movie to a user's list of favorites</td>
-            </tr>
-            <tr>
-              <td>/users/:id/movies/:movieTitle</td>
-              <td>DELETE</td>
-              <td>None</td>
-              <td>Removes a movie from a user's list of favorites</td>
-            </tr>
-            <tr>
-              <td>/users/:id</td>
-              <td>DELETE</td>
-              <td>None</td>
-              <td>Deregisters an existing user</td>
-            </tr>
-            <tr>
-              <td>/movies</td>
-              <td>GET</td>
-              <td>None</td>
-              <td>Returns a list of all movies</td>
-            </tr>
-            <tr>
-              <td>/movies/:title</td>
-              <td>GET</td>
-              <td>None</td>
-              <td>Returns data about a single movie by title</td>
-            </tr>
-            <tr>
-              <td>/genres/:name</td>
-              <td>GET</td>
-              <td>None</td>
-              <td>Returns data about a genre by name</td>
-            </tr>
-            <tr>
-              <td>/directors/:name</td>
-              <td>GET</td>
-              <td>None</td>
-              <td>Returns data about a director by name</td>
-            </tr>
-            <tr>
-              <td>/directors</td>
-              <td>POST</td>
-              <td>
-                JSON: { "Name": "string", "Bio": "string", "Birth": "date",
-                "Death": "date" }
-              </td>
-              <td>Adds a new director</td>
-            </tr>
-            <tr>
-              <td>/movies</td>
-              <td>POST</td>
-              <td>
-                JSON: { "Title": "string", "Description": "string", "Genre": {
-                "Name": "string", "Description": "string" }, "Director": {
-                "Name": "string", "Bio": "string", "Birth": "date", "Death":
-                "date" }, "ImageURL": "string", "Featured": "boolean" }
-              </td>
-              <td>Adds a new movie</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
+    <h1>API Documentation</h1>
+
+    <h2>User Endpoints</h2>
+
+    <h3>Get All Users</h3>
+    <p><strong>Method:</strong> GET</p>
+    <p><strong>URL:</strong> /users</p>
+    <p>
+      <strong>Description:</strong> Returns a list of all users (admin only).
+    </p>
+    <p><strong>Authentication:</strong> JWT</p>
+    <pre>
+    {
+      "users": [
+        {
+          "_id": "userId",
+          "username": "username",
+          "email": "email",
+          "favoriteMovies": []
+        }
+      ]
+    }
+  </pre
+    >
+
+    <h3>Get User by ID</h3>
+    <p><strong>Method:</strong> GET</p>
+    <p><strong>URL:</strong> /users/:id</p>
+    <p><strong>Description:</strong> Returns a user by ID.</p>
+    <p><strong>Authentication:</strong> JWT</p>
+    <pre>
+    {
+      "_id": "userId",
+      "username": "username",
+      "email": "email",
+      "favoriteMovies": []
+    }
+  </pre
+    >
+
+    <h3>Register New User</h3>
+    <p><strong>Method:</strong> POST</p>
+    <p><strong>URL:</strong> /users</p>
+    <p><strong>Description:</strong> Registers a new user.</p>
+    <p><strong>Request Body:</strong></p>
+    <pre>
+    {
+      "username": "username",
+      "email": "email",
+      "password": "password"
+    }
+  </pre
+    >
+    <p><strong>Response:</strong></p>
+    <pre>
+    {
+      "_id": "userId",
+      "username": "username",
+      "email": "email",
+      "favoriteMovies": []
+    }
+  </pre
+    >
+
+    <h3>Update User Info</h3>
+    <p><strong>Method:</strong> PUT</p>
+    <p><strong>URL:</strong> /users/:id</p>
+    <p><strong>Description:</strong> Updates user information.</p>
+    <p><strong>Authentication:</strong> JWT</p>
+    <p><strong>Request Body:</strong></p>
+    <pre>
+    {
+      "username": "username",
+      "email": "email",
+      "password": "password"
+    }
+  </pre
+    >
+    <p><strong>Response:</strong></p>
+    <pre>
+    {
+      "_id": "userId",
+      "username": "username",
+      "email": "email",
+      "favoriteMovies": []
+    }
+  </pre
+    >
+
+    <h3>Add Movie to Favorite Movies</h3>
+    <p><strong>Method:</strong> POST</p>
+    <p><strong>URL:</strong> /users/:id/movies/:movieTitle</p>
+    <p>
+      <strong>Description:</strong> Adds a movie to the user's list of favorite
+      movies.
+    </p>
+    <p><strong>Authentication:</strong> JWT</p>
+    <p><strong>Response:</strong></p>
+    <pre>
+    {
+      "_id": "userId",
+      "username": "username",
+      "email": "email",
+      "favoriteMovies": ["movieId"]
+    }
+  </pre
+    >
+
+    <h3>Remove Movie from Favorite Movies</h3>
+    <p><strong>Method:</strong> DELETE</p>
+    <p><strong>URL:</strong> /users/:id/movies/:movieTitle</p>
+    <p>
+      <strong>Description:</strong> Removes a movie from the user's list of
+      favorite movies.
+    </p>
+    <p><strong>Authentication:</strong> JWT</p>
+    <p><strong>Response:</strong></p>
+    <pre>
+    {
+      "_id": "userId",
+      "username": "username",
+      "email": "email",
+      "favoriteMovies": []
+    }
+  </pre
+    >
+
+    <h3>Deregister User</h3>
+    <p><strong>Method:</strong> DELETE</p>
+    <p><strong>URL:</strong> /users/:id</p>
+    <p><strong>Description:</strong> Deregisters an existing user.</p>
+    <p><strong>Authentication:</strong> JWT</p>
+    <p><strong>Response:</strong></p>
+    <pre>
+    {
+      "message": "User deregistered"
+    }
+  </pre
+    >
+
+    <h3>Get User's Favorite Movies</h3>
+    <p><strong>Method:</strong> GET</p>
+    <p><strong>URL:</strong> /users/:id/favoriteMovies</p>
+    <p><strong>Description:</strong> Returns a user's favorite movies.</p>
+    <p><strong>Authentication:</strong> JWT</p>
+    <p><strong>Response:</strong></p>
+    <pre>
+    {
+      "favoriteMovies": [
+        {
+          "_id": "movieId",
+          "Title": "movieTitle",
+          "Description": "movieDescription",
+          "Genre": {
+            "Type": "genreType",
+            "Description": "genreDescription"
+          },
+          "Director": {
+            "Name": "directorName",
+            "Birthdate": "directorBirthdate"
+          }
+        }
+      ]
+    }
+  </pre
+    >
+
+    <h2>Movie Endpoints</h2>
+
+    <h3>Get All Movies</h3>
+    <p><strong>Method:</strong> GET</p>
+    <p><strong>URL:</strong> /movies</p>
+    <p><strong>Description:</strong> Returns a list of all movies.</p>
+    <p><strong>Authentication:</strong> JWT</p>
+    <p><strong>Response:</strong></p>
+    <pre>
+    {
+      "movies": [
+        {
+          "_id": "movieId",
+          "Title": "movieTitle",
+          "Description": "movieDescription",
+          "Genre": {
+            "Type": "genreType",
+            "Description": "genreDescription"
+          },
+          "Director": {
+            "Name": "directorName",
+            "Birthdate": "directorBirthdate"
+          }
+        }
+      ]
+    }
+  </pre
+    >
+
+    <h3>Get Movie by Title</h3>
+    <p><strong>Method:</strong> GET</p>
+    <p><strong>URL:</strong> /movies/:title</p>
+    <p>
+      <strong>Description:</strong> Returns data about a single movie by title.
+    </p>
+    <p><strong>Authentication:</strong> JWT</p>
+    <p><strong>Response:</strong></p>
+    <pre>
+    {
+      "_id": "movieId",
+      "Title": "movieTitle",
+      "Description": "movieDescription",
+      "Genre": {
+        "Type": "genreType",
+        "Description": "genreDescription"
+      },
+      "Director": {
+        "Name": "directorName",
+        "Birthdate": "directorBirthdate"
+      }
+    }
+  </pre
+    >
+
+    <h3>Get Genre by Name</h3>
+    <p><strong>Method:</strong> GET</p>
+    <p><strong>URL:</strong> /genres/:name</p>
+    <p><strong>Description:</strong> Returns data about a genre by name.</p>
+    <p><strong>Authentication:</strong> JWT</p>
+    <p><strong>Response:</strong></p>
+    <pre>
+    {
+      "_id": "genreId",
+      "Type": "genreType",
+      "Description": "genreDescription"
+    }
+  </pre
+    >
+
+    <h3>Get Director by Name</h3>
+    <p><strong>Method:</strong> GET</p>
+    <p><strong>URL:</strong> /directors/:name</p>
+    <p><strong>Description:</strong> Returns data about a director by name.</p>
+    <p><strong>Authentication:</strong> JWT</p>
+    <p><strong>Response:</strong></p>
+    <pre>
+    {
+      "_id": "directorId",
+      "Name": "directorName",
+      "Birthdate": "directorBirthdate"
+    }
+  </pre
+    >
+
+    <h3>Add New Movie</h3>
+    <p><strong>Method:</strong> POST</p>
+    <p><strong>URL:</strong> /movies</p>
+    <p><strong>Description:</strong> Adds a new movie.</p>
+    <p><strong>Authentication:</strong> JWT</p>
+    <p><strong>Request Body:</strong></p>
+    <pre>
+    {
+      "Title": "movieTitle",
+      "Description": "movieDescription",
+      "Genre": {
+        "Type": "genreType",
+        "Description": "genreDescription"
+      },
+      "Director": {
+        "Name": "directorName",
+        "Birthdate": "directorBirthdate"
+      },
+      "ImageURL": "imageUrl",
+      "Featured": false
+    }
+  </pre
+    >
+    <p><strong>Response:</strong></p>
+    <pre>
+    {
+      "_id": "movieId",
+      "Title": "movieTitle",
+      "Description": "movieDescription",
+      "Genre": {
+        "Type": "genreType",
+        "Description": "genreDescription"
+      },
+      "Director": {
+        "Name": "directorName",
+        "Birthdate": "directorBirthdate"
+      },
+      "ImageURL": "imageUrl",
+      "Featured": false
+    }
+  </pre
+    >
   </body>
 </html>

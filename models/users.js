@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
 
 const UserSchema = new mongoose.Schema({
   username: {
@@ -25,8 +26,16 @@ const UserSchema = new mongoose.Schema({
       ref: "Movie",
     },
   ],
+  isAdmin: {
+    type: Boolean,
+    default: false,
+  },
 });
+
+UserSchema.methods.validatePassword = function (password) {
+  return bcrypt.compareSync(password, this.password);
+};
 
 const User = mongoose.model("User", UserSchema);
 
-module.exports = mongoose.model("User", UserSchema);
+module.exports = User;

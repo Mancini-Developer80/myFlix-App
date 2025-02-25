@@ -1,6 +1,5 @@
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
-
 const passportJWT = require("passport-jwt");
 
 const Users = require("./models/users");
@@ -10,16 +9,13 @@ const ExtractJWT = passportJWT.ExtractJwt;
 passport.use(
   new LocalStrategy(
     {
-      usernameField: "Username",
-      passwordField: "Password",
+      usernameField: "username",
+      passwordField: "password",
     },
     async (username, password, callback) => {
       console.log(`${username}  ${password}`);
-      await Users.findOne({ Username: username }, (error, user) => {
-        if (error) {
-          console.log(error);
-          return callback(error);
-        }
+      try {
+        const user = await Users.findOne({ username: username });
         if (!user) {
           console.log("incorrect username");
           return callback(null, false, { message: "Incorrect username." });
@@ -30,7 +26,10 @@ passport.use(
         }
         console.log("finished");
         return callback(null, user);
-      });
+      } catch (error) {
+        console.log(error);
+        return callback(error);
+      }
     }
   )
 );
@@ -42,14 +41,13 @@ passport.use(
       secretOrKey: "your_jwt_secret", // This is the same key used in the JWTStrategy
     },
     async (jwtPayload, callback) => {
-      console.log(jwtPayload);
-      await Users.findById(jwtPayload._id, (error, user) => {
-        if (error) {
-          console.log(error);
-          return callback(error);
-        }
+      try {
+        const user = await Users.findById(jwtPayload._id);
         return callback(null, user);
-      });
+      } catch (error) {
+        console.log(error);
+        return callback(error);
+      }
     }
   )
 );
