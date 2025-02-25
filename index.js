@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 const passport = require("passport");
 const dotenv = require("dotenv");
 const bcrypt = require("bcrypt");
+const cors = require("cors");
 
 if (process.env.NODE_ENV !== "production") {
   dotenv.config();
@@ -37,6 +38,7 @@ app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
+app.use(cors());
 
 app.use(passport.initialize());
 
