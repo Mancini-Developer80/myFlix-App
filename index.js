@@ -96,11 +96,15 @@ app.get(
 
 // Allow new users to register
 app.post("/users", async (req, res) => {
-  const { username, email, password } = req.body;
+  let { username, email, password } = req.body;
   if (!username || !email || !password) {
     return res.status(400).send("All fields are required");
   } else {
     try {
+      // Trim whitespace from username and email
+      username = username.trim();
+      email = email.trim();
+
       const hashedPassword = bcrypt.hashSync(password, 10);
       const newUser = new User({
         username,
@@ -115,7 +119,6 @@ app.post("/users", async (req, res) => {
     }
   }
 });
-
 // Allow users to update their user info
 app.put(
   "/users/:id",
@@ -153,6 +156,10 @@ app.post(
       const movie = await Movie.findOne({ Title: movieTitle });
       if (!movie) {
         return res.status(404).send("Movie not found");
+      }
+      // Check if the movie is already in the user's list of favorite movies
+      if (user.favoriteMovies.includes(movie._id)) {
+        return res.status(400).send("Movie already in favorite list");
       }
       user.favoriteMovies.push(movie._id);
       const updatedUser = await user.save();
