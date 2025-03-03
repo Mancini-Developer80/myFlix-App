@@ -235,18 +235,14 @@ app.get(
 // Movie routes
 
 // Return a list of ALL movies to the user
-app.get(
-  "/movies",
-  passport.authenticate("jwt", { session: false }),
-  async (req, res) => {
-    try {
-      const movies = await Movie.find();
-      res.status(200).json(movies);
-    } catch (err) {
-      res.status(500).send(err.message);
-    }
+app.get("/movies", async (req, res) => {
+  try {
+    const movies = await Movie.find();
+    res.status(200).json(movies);
+  } catch (err) {
+    res.status(500).send(err.message);
   }
-);
+});
 
 // Return data about a single movie by title
 app.get(
