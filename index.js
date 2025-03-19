@@ -7,6 +7,7 @@ const passport = require("passport");
 const dotenv = require("dotenv");
 const bcrypt = require("bcrypt");
 const cors = require("cors");
+const { uploadImage } = require("./imgur");
 
 if (process.env.NODE_ENV !== "production") {
   dotenv.config();
@@ -307,18 +308,19 @@ app.post(
   "/movies",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
-    const { Title, Description, Genre, Director, ImageURL, Featured } =
+    const { Title, Description, Genre, Director, ImagePath, Featured } =
       req.body;
-    if (!Title || !Description || !Genre || !Director || !ImageURL) {
+    if (!Title || !Description || !Genre || !Director || !ImagePath) {
       return res.status(400).send("All fields are required");
     } else {
       try {
+        const imageURL = await uploadImage(ImagePath);
         const newMovie = new Movie({
           Title,
           Description,
           Genre,
           Director,
-          ImageURL,
+          ImageURL: imageURL,
           Featured: Featured || false,
         });
         const savedMovie = await newMovie.save();
