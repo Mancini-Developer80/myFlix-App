@@ -308,13 +308,29 @@ app.post(
   "/movies",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
-    const { Title, Description, Genre, Director, ImagePath, Featured } =
-      req.body;
-    if (!Title || !Description || !Genre || !Director || !ImagePath) {
+    const {
+      Title,
+      Description,
+      Genre,
+      Director,
+      ImagePath,
+      ImageURL,
+      Featured,
+    } = req.body;
+    if (
+      !Title ||
+      !Description ||
+      !Genre ||
+      !Director ||
+      (!ImagePath && !ImageURL)
+    ) {
       return res.status(400).send("All fields are required");
     } else {
       try {
-        const imageURL = await uploadImage(ImagePath);
+        let imageURL = ImageURL;
+        if (ImagePath) {
+          imageURL = await uploadImage(ImagePath);
+        }
         const newMovie = new Movie({
           Title,
           Description,
@@ -326,7 +342,8 @@ app.post(
         const savedMovie = await newMovie.save();
         res.status(201).json(savedMovie);
       } catch (err) {
-        res.status(500).send(err.message);
+        console.error("Error creating new movie:", err.message);
+        res.status(500).send("Internal server error");
       }
     }
   }

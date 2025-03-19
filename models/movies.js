@@ -39,6 +39,14 @@ const MovieSchema = new mongoose.Schema({
     type: DirectorSchema,
     required: true,
   },
+  ImageURL: {
+    type: String,
+    required: true,
+  },
+  Featured: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const Movie = mongoose.model("Movie", MovieSchema);

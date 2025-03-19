@@ -17,7 +17,10 @@ const uploadImage = async (imagePath) => {
 
     return response.data.data.link;
   } catch (error) {
-    console.error("Error uploading image to Imgur:", error);
+    console.error(
+      "Error uploading image to Imgur:",
+      error.response ? error.response.data : error.message
+    );
     throw new Error("Failed to upload image to Imgur");
   }
 };
