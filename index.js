@@ -177,21 +177,29 @@ app.delete(
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     const { id, movieTitle } = req.params;
+    console.log(`Deleting movie: ${movieTitle} for user: ${id}`);
     try {
       const user = await User.findById(id);
       if (!user) {
+        console.error("User not found");
         return res.status(404).send("User not found");
       }
       const movie = await Movie.findOne({ Title: movieTitle });
       if (!movie) {
+        console.error("Movie not found");
         return res.status(404).send("Movie not found");
       }
+      console.log(`Removing movie: ${movie._id} from user's favorite movies`);
       user.favoriteMovies = user.favoriteMovies.filter(
         (movieId) => movieId.toString() !== movie._id.toString()
       );
       const updatedUser = await user.save();
+      console.log(
+        `Updated user's favorite movies: ${updatedUser.favoriteMovies}`
+      );
       res.status(200).json(updatedUser);
     } catch (err) {
+      console.error("Error deleting movie:", err.message);
       res.status(500).send(err.message);
     }
   }
