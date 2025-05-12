@@ -59,7 +59,13 @@ app.get("/", (req, res) => {
   res.send("Welcome to myFlix!");
 });
 
-// Return a list of ALL users (admin only)
+/**
+ * @route GET /users
+ * @description Retrieve a list of all users. Only accessible by admins.
+ * @access Private (Admins only)
+ * @middleware passport.authenticate("jwt", { session: false })
+ * @returns {Array} List of all users in the database.
+ */
 app.get(
   "/users",
   passport.authenticate("jwt", { session: false }),
@@ -78,6 +84,16 @@ app.get(
 );
 
 // GET a user
+/**
+ * @route GET /users/:id
+ * @description Retrieve a user's information by their ID.
+ * @access Private (Requires JWT authentication)
+ * @middleware passport.authenticate("jwt", { session: false })
+ * @param {string} id - The ID of the user to retrieve.
+ * @returns {Object} The user's information if found, or an error message if not.
+ * @throws {404} User not found.
+ * @throws {500} Internal server error.
+ */
 app.get(
   "/users/:id",
   passport.authenticate("jwt", { session: false }),
@@ -95,7 +111,17 @@ app.get(
   }
 );
 
-// Allow new users to register
+/**
+ * @route POST /users
+ * @description Register a new user.
+ * @access Public
+ * @param {string} username - The username of the new user.
+ * @param {string} email - The email address of the new user.
+ * @param {string} password - The password of the new user.
+ * @returns {Object} The newly created user object.
+ * @throws {400} All fields are required.
+ * @throws {500} Internal server error.
+ */
 app.post("/users", async (req, res) => {
   let { username, email, password } = req.body;
   if (!username || !email || !password) {
@@ -120,7 +146,20 @@ app.post("/users", async (req, res) => {
     }
   }
 });
-// Allow users to update their user info
+
+/**
+ * @route PUT /users/:id
+ * @description Update a user's information by their ID.
+ * @access Private (Requires JWT authentication)
+ * @middleware passport.authenticate("jwt", { session: false })
+ * @param {string} id - The ID of the user to update.
+ * @param {string} [username] - The new username for the user.
+ * @param {string} [email] - The new email address for the user.
+ * @param {string} [password] - The new password for the user.
+ * @returns {Object} The updated user object if successful.
+ * @throws {404} User not found.
+ * @throws {500} Internal server error.
+ */
 app.put(
   "/users/:id",
   passport.authenticate("jwt", { session: false }),
@@ -143,7 +182,19 @@ app.put(
   }
 );
 
-// Allow users to add a movie to their list of favorites
+/**
+ * @route POST /users/:id/movies/:movieTitle
+ * @description Add a movie to a user's list of favorite movies.
+ * @access Private (Requires JWT authentication)
+ * @middleware passport.authenticate("jwt", { session: false })
+ * @param {string} id - The ID of the user.
+ * @param {string} movieTitle - The title of the movie to add.
+ * @returns {Object} The updated user object with the added favorite movie.
+ * @throws {404} User not found.
+ * @throws {404} Movie not found.
+ * @throws {400} Movie already in favorite list.
+ * @throws {500} Internal server error.
+ */
 app.post(
   "/users/:id/movies/:movieTitle",
   passport.authenticate("jwt", { session: false }),
@@ -171,7 +222,18 @@ app.post(
   }
 );
 
-// Allow users to remove a movie from their list of favorites
+/**
+ * @route DELETE /users/:id/movies/:movieTitle
+ * @description Remove a movie from a user's list of favorite movies.
+ * @access Private (Requires JWT authentication)
+ * @middleware passport.authenticate("jwt", { session: false })
+ * @param {string} id - The ID of the user.
+ * @param {string} movieTitle - The title of the movie to remove.
+ * @returns {Object} The updated user object without the removed favorite movie.
+ * @throws {404} User not found.
+ * @throws {404} Movie not found.
+ * @throws {500} Internal server error.
+ */
 app.delete(
   "/users/:id/movies/:movieTitle",
   passport.authenticate("jwt", { session: false }),
@@ -205,7 +267,16 @@ app.delete(
   }
 );
 
-// Allow existing users to deregister
+/**
+ * @route DELETE /users/:id
+ * @description Deregister a user by their ID.
+ * @access Private (Requires JWT authentication)
+ * @middleware passport.authenticate("jwt", { session: false })
+ * @param {string} id - The ID of the user to deregister.
+ * @returns {string} A success message if the user is deregistered.
+ * @throws {404} User not found.
+ * @throws {500} Internal server error.
+ */
 app.delete(
   "/users/:id",
   passport.authenticate("jwt", { session: false }),
@@ -223,7 +294,16 @@ app.delete(
   }
 );
 
-// Return a user's favorite movies
+/**
+ * @route GET /users/:id/favoriteMovies
+ * @description Retrieve a user's list of favorite movies by their ID.
+ * @access Private (Requires JWT authentication)
+ * @middleware passport.authenticate("jwt", { session: false })
+ * @param {string} id - The ID of the user whose favorite movies are to be retrieved.
+ * @returns {Array} A list of the user's favorite movies.
+ * @throws {404} User not found.
+ * @throws {500} Internal server error.
+ */
 app.get(
   "/users/:id/favoriteMovies",
   passport.authenticate("jwt", { session: false }),
@@ -241,9 +321,14 @@ app.get(
   }
 );
 
-// Movie routes
-
-// Return a list of ALL movies to the user
+/**
+ * @route GET /movies
+ * @description Retrieve a list of all movies.
+ * @access Private (Requires JWT authentication)
+ * @middleware passport.authenticate("jwt", { session: false })
+ * @returns {Array} A list of all movies in the database.
+ * @throws {500} Internal server error.
+ */
 app.get(
   "/movies",
   passport.authenticate("jwt", { session: false }),
@@ -257,7 +342,16 @@ app.get(
   }
 );
 
-// Return data about a single movie by title
+/**
+ * @route GET /movies/:title
+ * @description Retrieve data about a movie by its title.
+ * @access Private (Requires JWT authentication)
+ * @middleware passport.authenticate("jwt", { session: false })
+ * @param {string} title - The title of the movie to retrieve.
+ * @returns {Object} The movie's information if found.
+ * @throws {404} Movie not found.
+ * @throws {500} Internal server error.
+ */
 app.get(
   "/movies/:title",
   passport.authenticate("jwt", { session: false }),
@@ -275,7 +369,16 @@ app.get(
   }
 );
 
-// Return data about a genre by name
+/**
+ * @route GET /genres/:name
+ * @description Retrieve data about a genre by its name.
+ * @access Private (Requires JWT authentication)
+ * @middleware passport.authenticate("jwt", { session: false })
+ * @param {string} name - The name of the genre to retrieve.
+ * @returns {Object} The genre's information if found.
+ * @throws {404} Genre not found.
+ * @throws {500} Internal server error.
+ */
 app.get(
   "/genres/:name",
   passport.authenticate("jwt", { session: false }),
@@ -293,7 +396,16 @@ app.get(
   }
 );
 
-// Return data about a director by name
+/**
+ * @route GET /directors/:name
+ * @description Retrieve data about a director by their name.
+ * @access Private (Requires JWT authentication)
+ * @middleware passport.authenticate("jwt", { session: false })
+ * @param {string} name - The name of the director to retrieve.
+ * @returns {Object} The director's information if found.
+ * @throws {404} Director not found.
+ * @throws {500} Internal server error.
+ */
 app.get(
   "/directors/:name",
   passport.authenticate("jwt", { session: false }),
@@ -311,7 +423,22 @@ app.get(
   }
 );
 
-// Allow new movies to be added
+/**
+ * @route POST /movies
+ * @description Add a new movie to the database.
+ * @access Private (Requires JWT authentication)
+ * @middleware passport.authenticate("jwt", { session: false })
+ * @param {string} Title - The title of the movie.
+ * @param {string} Description - A brief description of the movie.
+ * @param {string} Genre - The genre of the movie.
+ * @param {string} Director - The director of the movie.
+ * @param {string} [ImagePath] - The local path to the movie's image (optional).
+ * @param {string} [ImageURL] - The URL of the movie's image (optional, used if ImagePath is not provided).
+ * @param {boolean} [Featured=false] - Whether the movie is featured or not.
+ * @returns {Object} The newly created movie object.
+ * @throws {400} All required fields must be provided.
+ * @throws {500} Internal server error.
+ */
 app.post(
   "/movies",
   passport.authenticate("jwt", { session: false }),
