@@ -60,11 +60,34 @@ app.get("/", (req, res) => {
 });
 
 /**
- * @route GET /users
- * @description Retrieve a list of all users. Only accessible by admins.
- * @access Private (Admins only)
- * @middleware passport.authenticate("jwt", { session: false })
- * @returns {Array} List of all users in the database.
+ * @param Retrieve a list of all users. Only accessible by admins.
+ * @param {Object} req - The request object.
+ * @param {Object} req.user - The authenticated user object.
+ * @param {boolean} req.user.isAdmin - Indicates if the user is an admin.
+ * @param {Object} res - The response object.
+ * @returns {Array} A list of all users in the database.
+ * @throws {403} Access denied. Admins only.
+ * @throws {500} Internal server error.
+ * @example
+ * // Example request:
+ * GET /users
+ * Headers: { Authorization: "Bearer <JWT_TOKEN>" }
+ *
+ * // Example response:
+ * [
+ *   {
+ *     "_id": "12345",
+ *     "username": "john_doe",
+ *     "email": "john@example.com",
+ *     "favoriteMovies": []
+ *   },
+ *   {
+ *     "_id": "67890",
+ *     "username": "jane_doe",
+ *     "email": "jane@example.com",
+ *     "favoriteMovies": ["54321"]
+ *   }
+ * ]
  */
 app.get(
   "/users",
@@ -85,10 +108,8 @@ app.get(
 
 // GET a user
 /**
- * @route GET /users/:id
- * @description Retrieve a user's information by their ID.
- * @access Private (Requires JWT authentication)
- * @middleware passport.authenticate("jwt", { session: false })
+ *
+ * @param Retrieve a user's information by their ID.
  * @param {string} id - The ID of the user to retrieve.
  * @returns {Object} The user's information if found, or an error message if not.
  * @throws {404} User not found.
@@ -112,9 +133,8 @@ app.get(
 );
 
 /**
- * @route POST /users
- * @description Register a new user.
- * @access Public
+ *
+ * @param Register a new user.
  * @param {string} username - The username of the new user.
  * @param {string} email - The email address of the new user.
  * @param {string} password - The password of the new user.
@@ -148,10 +168,8 @@ app.post("/users", async (req, res) => {
 });
 
 /**
- * @route PUT /users/:id
- * @description Update a user's information by their ID.
- * @access Private (Requires JWT authentication)
- * @middleware passport.authenticate("jwt", { session: false })
+ *
+ * @param Update a user's information by their ID.
  * @param {string} id - The ID of the user to update.
  * @param {string} [username] - The new username for the user.
  * @param {string} [email] - The new email address for the user.
@@ -183,10 +201,8 @@ app.put(
 );
 
 /**
- * @route POST /users/:id/movies/:movieTitle
- * @description Add a movie to a user's list of favorite movies.
- * @access Private (Requires JWT authentication)
- * @middleware passport.authenticate("jwt", { session: false })
+ *
+ * @param Add a movie to a user's list of favorite movies.
  * @param {string} id - The ID of the user.
  * @param {string} movieTitle - The title of the movie to add.
  * @returns {Object} The updated user object with the added favorite movie.
@@ -223,10 +239,8 @@ app.post(
 );
 
 /**
- * @route DELETE /users/:id/movies/:movieTitle
- * @description Remove a movie from a user's list of favorite movies.
- * @access Private (Requires JWT authentication)
- * @middleware passport.authenticate("jwt", { session: false })
+ *
+ * @param Remove a movie from a user's list of favorite movies.
  * @param {string} id - The ID of the user.
  * @param {string} movieTitle - The title of the movie to remove.
  * @returns {Object} The updated user object without the removed favorite movie.
@@ -268,10 +282,8 @@ app.delete(
 );
 
 /**
- * @route DELETE /users/:id
- * @description Deregister a user by their ID.
- * @access Private (Requires JWT authentication)
- * @middleware passport.authenticate("jwt", { session: false })
+ *
+ * @param Deregister a user by their ID.
  * @param {string} id - The ID of the user to deregister.
  * @returns {string} A success message if the user is deregistered.
  * @throws {404} User not found.
@@ -295,10 +307,8 @@ app.delete(
 );
 
 /**
- * @route GET /users/:id/favoriteMovies
- * @description Retrieve a user's list of favorite movies by their ID.
- * @access Private (Requires JWT authentication)
- * @middleware passport.authenticate("jwt", { session: false })
+ *
+ * @param Retrieve a user's list of favorite movies by their ID.
  * @param {string} id - The ID of the user whose favorite movies are to be retrieved.
  * @returns {Array} A list of the user's favorite movies.
  * @throws {404} User not found.
@@ -322,10 +332,8 @@ app.get(
 );
 
 /**
- * @route GET /movies
- * @description Retrieve a list of all movies.
- * @access Private (Requires JWT authentication)
- * @middleware passport.authenticate("jwt", { session: false })
+ *
+ * @param Retrieve a list of all movies.
  * @returns {Array} A list of all movies in the database.
  * @throws {500} Internal server error.
  */
@@ -343,10 +351,8 @@ app.get(
 );
 
 /**
- * @route GET /movies/:title
- * @description Retrieve data about a movie by its title.
- * @access Private (Requires JWT authentication)
- * @middleware passport.authenticate("jwt", { session: false })
+ *
+ * @param Retrieve data about a movie by its title.
  * @param {string} title - The title of the movie to retrieve.
  * @returns {Object} The movie's information if found.
  * @throws {404} Movie not found.
@@ -370,10 +376,8 @@ app.get(
 );
 
 /**
- * @route GET /genres/:name
- * @description Retrieve data about a genre by its name.
- * @access Private (Requires JWT authentication)
- * @middleware passport.authenticate("jwt", { session: false })
+ *
+ * @param Retrieve data about a genre by its name.
  * @param {string} name - The name of the genre to retrieve.
  * @returns {Object} The genre's information if found.
  * @throws {404} Genre not found.
@@ -397,10 +401,8 @@ app.get(
 );
 
 /**
- * @route GET /directors/:name
- * @description Retrieve data about a director by their name.
- * @access Private (Requires JWT authentication)
- * @middleware passport.authenticate("jwt", { session: false })
+ *
+ * @param Retrieve data about a director by their name.
  * @param {string} name - The name of the director to retrieve.
  * @returns {Object} The director's information if found.
  * @throws {404} Director not found.
@@ -424,10 +426,8 @@ app.get(
 );
 
 /**
- * @route POST /movies
- * @description Add a new movie to the database.
- * @access Private (Requires JWT authentication)
- * @middleware passport.authenticate("jwt", { session: false })
+ *
+ * @param Add a new movie to the database.
  * @param {string} Title - The title of the movie.
  * @param {string} Description - A brief description of the movie.
  * @param {string} Genre - The genre of the movie.
