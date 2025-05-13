@@ -60,34 +60,17 @@ app.get("/", (req, res) => {
 });
 
 /**
- * @param Retrieve a list of all users. Only accessible by admins.
+ * @description Retrieve a list of all users. Only accessible by admins.
+ * @route GET /users
+ * @access Private (Admin only)
  * @param {Object} req - The request object.
  * @param {Object} req.user - The authenticated user object.
  * @param {boolean} req.user.isAdmin - Indicates if the user is an admin.
  * @param {Object} res - The response object.
- * @returns {Array} A list of all users in the database.
+ * @returns {Promise<Array<Object>>} A list of all users in the database.
  * @throws {403} Access denied. Admins only.
  * @throws {500} Internal server error.
- * @example
- * // Example request:
- * GET /users
- * Headers: { Authorization: "Bearer <JWT_TOKEN>" }
- *
- * // Example response:
- * [
- *   {
- *     "_id": "12345",
- *     "username": "john_doe",
- *     "email": "john@example.com",
- *     "favoriteMovies": []
- *   },
- *   {
- *     "_id": "67890",
- *     "username": "jane_doe",
- *     "email": "jane@example.com",
- *     "favoriteMovies": ["54321"]
- *   }
- * ]
+ * @async
  */
 app.get(
   "/users",
@@ -106,14 +89,18 @@ app.get(
   }
 );
 
-// GET a user
 /**
- *
- * @param Retrieve a user's information by their ID.
- * @param {string} id - The ID of the user to retrieve.
- * @returns {Object} The user's information if found, or an error message if not.
+ * @description Retrieve a user's information by their ID.
+ * @route GET /users/:id
+ * @access Private
+ * @param {Object} req - The request object.
+ * @param {Object} req.params - The parameters object.
+ * @param {string} req.params.id - The ID of the user to retrieve.
+ * @param {Object} res - The response object.
+ * @returns {Promise<Object>} The user's information if found, or an error message if not.
  * @throws {404} User not found.
  * @throws {500} Internal server error.
+ * @async
  */
 app.get(
   "/users/:id",
@@ -133,14 +120,19 @@ app.get(
 );
 
 /**
- *
- * @param Register a new user.
- * @param {string} username - The username of the new user.
- * @param {string} email - The email address of the new user.
- * @param {string} password - The password of the new user.
- * @returns {Object} The newly created user object.
+ * @description Register a new user.
+ * @route POST /users
+ * @access Public
+ * @param {Object} req - The request object.
+ * @param {Object} req.body - The request body.
+ * @param {string} req.body.username - The username of the new user.
+ * @param {string} req.body.email - The email address of the new user.
+ * @param {string} req.body.password - The password of the new user.
+ * @param {Object} res - The response object.
+ * @returns {Promise<Object>} The newly created user object.
  * @throws {400} All fields are required.
  * @throws {500} Internal server error.
+ * @async
  */
 app.post("/users", async (req, res) => {
   let { username, email, password } = req.body;
@@ -168,15 +160,21 @@ app.post("/users", async (req, res) => {
 });
 
 /**
- *
- * @param Update a user's information by their ID.
- * @param {string} id - The ID of the user to update.
- * @param {string} [username] - The new username for the user.
- * @param {string} [email] - The new email address for the user.
- * @param {string} [password] - The new password for the user.
- * @returns {Object} The updated user object if successful.
+ * @description Update a user's information by their ID.
+ * @route PUT /users/:id
+ * @access Private
+ * @param {Object} req - The request object.
+ * @param {Object} req.params - The parameters object.
+ * @param {string} req.params.id - The ID of the user to update.
+ * @param {Object} req.body - The request body.
+ * @param {string} [req.body.username] - The new username for the user.
+ * @param {string} [req.body.email] - The new email address for the user.
+ * @param {string} [req.body.password] - The new password for the user.
+ * @param {Object} res - The response object.
+ * @returns {Promise<Object>} The updated user object if successful.
  * @throws {404} User not found.
  * @throws {500} Internal server error.
+ * @async
  */
 app.put(
   "/users/:id",
@@ -201,15 +199,20 @@ app.put(
 );
 
 /**
- *
- * @param Add a movie to a user's list of favorite movies.
- * @param {string} id - The ID of the user.
- * @param {string} movieTitle - The title of the movie to add.
- * @returns {Object} The updated user object with the added favorite movie.
+ * @description Add a movie to a user's list of favorite movies.
+ * @route POST /users/:id/movies/:movieTitle
+ * @access Private
+ * @param {Object} req - The request object.
+ * @param {Object} req.params - The request parameters.
+ * @param {string} req.params.id - The ID of the user.
+ * @param {string} req.params.movieTitle - The title of the movie to add.
+ * @param {Object} res - The response object.
+ * @returns {Promise<Object>} The updated user object with the added favorite movie.
  * @throws {404} User not found.
  * @throws {404} Movie not found.
  * @throws {400} Movie already in favorite list.
  * @throws {500} Internal server error.
+ * @async
  */
 app.post(
   "/users/:id/movies/:movieTitle",
@@ -239,55 +242,17 @@ app.post(
 );
 
 /**
- *
- * @param Remove a movie from a user's list of favorite movies.
- * @param {string} id - The ID of the user.
- * @param {string} movieTitle - The title of the movie to remove.
- * @returns {Object} The updated user object without the removed favorite movie.
- * @throws {404} User not found.
- * @throws {404} Movie not found.
- * @throws {500} Internal server error.
- */
-app.delete(
-  "/users/:id/movies/:movieTitle",
-  passport.authenticate("jwt", { session: false }),
-  async (req, res) => {
-    const { id, movieTitle } = req.params;
-    console.log(`Deleting movie: ${movieTitle} for user: ${id}`);
-    try {
-      const user = await User.findById(id);
-      if (!user) {
-        console.error("User not found");
-        return res.status(404).send("User not found");
-      }
-      const movie = await Movie.findOne({ Title: movieTitle });
-      if (!movie) {
-        console.error("Movie not found");
-        return res.status(404).send("Movie not found");
-      }
-      console.log(`Removing movie: ${movie._id} from user's favorite movies`);
-      user.favoriteMovies = user.favoriteMovies.filter(
-        (movieId) => movieId.toString() !== movie._id.toString()
-      );
-      const updatedUser = await user.save();
-      console.log(
-        `Updated user's favorite movies: ${updatedUser.favoriteMovies}`
-      );
-      res.status(200).json(updatedUser);
-    } catch (err) {
-      console.error("Error deleting movie:", err.message);
-      res.status(500).send(err.message);
-    }
-  }
-);
-
-/**
- *
- * @param Deregister a user by their ID.
- * @param {string} id - The ID of the user to deregister.
- * @returns {string} A success message if the user is deregistered.
+ * @description Deregister a user by their ID.
+ * @route DELETE /users/:id
+ * @access Private
+ * @param {Object} req - The request object.
+ * @param {Object} req.params - The request parameters.
+ * @param {string} req.params.id - The ID of the user to deregister.
+ * @param {Object} res - The response object.
+ * @returns {Promise<string>} A success message if the user is deregistered.
  * @throws {404} User not found.
  * @throws {500} Internal server error.
+ * @async
  */
 app.delete(
   "/users/:id",
@@ -307,12 +272,17 @@ app.delete(
 );
 
 /**
- *
- * @param Retrieve a user's list of favorite movies by their ID.
- * @param {string} id - The ID of the user whose favorite movies are to be retrieved.
- * @returns {Array} A list of the user's favorite movies.
+ * @description Retrieve a user's list of favorite movies by their ID.
+ * @route GET /users/:id/favoriteMovies
+ * @access Private
+ * @param {Object} req - The request object.
+ * @param {Object} req.params - The request parameters.
+ * @param {string} req.params.id - The ID of the user whose favorite movies are to be retrieved.
+ * @param {Object} res - The response object.
+ * @returns {Promise<Array<Object>>} A list of the user's favorite movies.
  * @throws {404} User not found.
  * @throws {500} Internal server error.
+ * @async
  */
 app.get(
   "/users/:id/favoriteMovies",
@@ -332,10 +302,14 @@ app.get(
 );
 
 /**
- *
- * @param Retrieve a list of all movies.
- * @returns {Array} A list of all movies in the database.
+ * @description Retrieve a list of all movies.
+ * @route GET /movies
+ * @access Private
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @returns {Promise<Array<Object>>} A list of all movies in the database.
  * @throws {500} Internal server error.
+ * @async
  */
 app.get(
   "/movies",
@@ -351,12 +325,17 @@ app.get(
 );
 
 /**
- *
- * @param Retrieve data about a movie by its title.
- * @param {string} title - The title of the movie to retrieve.
- * @returns {Object} The movie's information if found.
+ * @description Retrieve data about a movie by its title.
+ * @route GET /movies/:title
+ * @access Private
+ * @param {Object} req - The request object.
+ * @param {Object} req.params - The request parameters.
+ * @param {string} req.params.title - The title of the movie to retrieve.
+ * @param {Object} res - The response object.
+ * @returns {Promise<Object>} The movie's information if found.
  * @throws {404} Movie not found.
  * @throws {500} Internal server error.
+ * @async
  */
 app.get(
   "/movies/:title",
@@ -376,12 +355,17 @@ app.get(
 );
 
 /**
- *
- * @param Retrieve data about a genre by its name.
- * @param {string} name - The name of the genre to retrieve.
- * @returns {Object} The genre's information if found.
+ * @description Retrieve data about a genre by its name.
+ * @route GET /genres/:name
+ * @access Private
+ * @param {Object} req - The request object.
+ * @param {Object} req.params - The request parameters.
+ * @param {string} req.params.name - The name of the genre to retrieve.
+ * @param {Object} res - The response object.
+ * @returns {Promise<Object>} The genre's information if found.
  * @throws {404} Genre not found.
  * @throws {500} Internal server error.
+ * @async
  */
 app.get(
   "/genres/:name",
@@ -401,12 +385,17 @@ app.get(
 );
 
 /**
- *
- * @param Retrieve data about a director by their name.
- * @param {string} name - The name of the director to retrieve.
- * @returns {Object} The director's information if found.
+ * @description Retrieve data about a director by their name.
+ * @route GET /directors/:name
+ * @access Private
+ * @param {Object} req - The request object.
+ * @param {Object} req.params - The request parameters.
+ * @param {string} req.params.name - The name of the director to retrieve.
+ * @param {Object} res - The response object.
+ * @returns {Promise<Object>} The director's information if found.
  * @throws {404} Director not found.
  * @throws {500} Internal server error.
+ * @async
  */
 app.get(
   "/directors/:name",
@@ -426,18 +415,23 @@ app.get(
 );
 
 /**
- *
- * @param Add a new movie to the database.
- * @param {string} Title - The title of the movie.
- * @param {string} Description - A brief description of the movie.
- * @param {string} Genre - The genre of the movie.
- * @param {string} Director - The director of the movie.
- * @param {string} [ImagePath] - The local path to the movie's image (optional).
- * @param {string} [ImageURL] - The URL of the movie's image (optional, used if ImagePath is not provided).
- * @param {boolean} [Featured=false] - Whether the movie is featured or not.
- * @returns {Object} The newly created movie object.
+ * @description Add a new movie to the database.
+ * @route POST /movies
+ * @access Private
+ * @param {Object} req - The request object.
+ * @param {Object} req.body - The request body.
+ * @param {string} req.body.Title - The title of the movie.
+ * @param {string} req.body.Description - A brief description of the movie.
+ * @param {string} req.body.Genre - The genre of the movie.
+ * @param {string} req.body.Director - The director of the movie.
+ * @param {string} [req.body.ImagePath] - The local path to the movie's image (optional).
+ * @param {string} [req.body.ImageURL] - The URL of the movie's image (optional, used if ImagePath is not provided).
+ * @param {boolean} [req.body.Featured=false] - Whether the movie is featured or not.
+ * @param {Object} res - The response object.
+ * @returns {Promise<Object>} The newly created movie object.
  * @throws {400} All required fields must be provided.
  * @throws {500} Internal server error.
+ * @async
  */
 app.post(
   "/movies",
@@ -459,7 +453,7 @@ app.post(
       !Director ||
       (!ImagePath && !ImageURL)
     ) {
-      return res.status(400).send("All fields are required");
+      return res.status(400).send("All required fields must be provided");
     } else {
       try {
         let imageURL = ImageURL;
