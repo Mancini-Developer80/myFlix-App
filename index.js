@@ -71,14 +71,14 @@ app.get(
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     if (!req.user.isAdmin) {
-      return res.status(403).send("Access denied. Admins only.");
+      return res.status(403).json({ error: "Access denied. Admins only." });
     }
 
     try {
       const users = await User.find();
       res.status(200).json(users);
     } catch (err) {
-      res.status(500).send(err.message);
+      res.status(500).json({ error: err.message });
     }
   }
 );
@@ -98,11 +98,11 @@ app.get(
     try {
       const user = await User.findById(id);
       if (!user) {
-        return res.status(404).send("User not found");
+        return res.status(404).json({ error: "User not found" });
       }
       res.status(200).json(user);
     } catch (err) {
-      res.status(500).send(err.message);
+      res.status(500).json({ error: err.message });
     }
   }
 );
@@ -168,11 +168,11 @@ app.put(
         { new: true }
       );
       if (!updatedUser) {
-        return res.status(404).send("User not found");
+        return res.status(404).json({ error: "User not found" });
       }
       res.status(200).json(updatedUser);
     } catch (err) {
-      res.status(500).send(err.message);
+      res.status(500).json({ error: err.message });
     }
   }
 );
@@ -192,21 +192,23 @@ app.post(
     try {
       const user = await User.findById(id);
       if (!user) {
-        return res.status(404).send("User not found");
+        return res.status(404).json({ error: "User not found" });
       }
       const movie = await Movie.findOne({ Title: movieTitle });
       if (!movie) {
-        return res.status(404).send("Movie not found");
+        return res.status(404).json({ error: "Movie not found" });
       }
       // Check if the movie is already in the user's list of favorite movies
       if (user.favoriteMovies.includes(movie._id)) {
-        return res.status(400).send("Movie already in favorite list");
+        return res
+          .status(400)
+          .json({ error: "Movie already in favorite list" });
       }
       user.favoriteMovies.push(movie._id);
       const updatedUser = await user.save();
       res.status(201).json(updatedUser);
     } catch (err) {
-      res.status(500).send(err.message);
+      res.status(500).json({ error: err.message });
     }
   }
 );
@@ -226,11 +228,11 @@ app.delete(
     try {
       const deletedUser = await User.findByIdAndDelete(id);
       if (!deletedUser) {
-        return res.status(404).send("User not found");
+        return res.status(404).json({ error: "User not found" });
       }
-      res.status(200).send("User deregistered");
+      res.status(200).json({ message: "User deregistered" });
     } catch (err) {
-      res.status(500).send(err.message);
+      res.status(500).json({ error: err.message });
     }
   }
 );
@@ -250,11 +252,11 @@ app.get(
     try {
       const user = await User.findById(id).populate("favoriteMovies");
       if (!user) {
-        return res.status(404).send("User not found");
+        return res.status(404).json({ error: "User not found" });
       }
       res.status(200).json(user.favoriteMovies);
     } catch (err) {
-      res.status(500).send(err.message);
+      res.status(500).json({ error: err.message });
     }
   }
 );
@@ -274,7 +276,7 @@ app.get(
       const movies = await Movie.find();
       res.status(200).json(movies);
     } catch (err) {
-      res.status(500).send(err.message);
+      res.status(500).json({ error: err.message });
     }
   }
 );
@@ -318,11 +320,11 @@ app.get(
     try {
       const movie = await Movie.findOne({ Title: title });
       if (!movie) {
-        return res.status(404).send("Movie not found");
+        return res.status(404).json({ error: "Movie not found" });
       }
       res.status(200).json(movie);
     } catch (err) {
-      res.status(500).send(err.message);
+      res.status(500).json({ error: err.message });
     }
   }
 );
@@ -342,11 +344,11 @@ app.get(
     try {
       const genre = await Genre.findOne({ Name: name });
       if (!genre) {
-        return res.status(404).send("Genre not found");
+        return res.status(404).json({ error: "Genre not found" });
       }
       res.status(200).json(genre);
     } catch (err) {
-      res.status(500).send(err.message);
+      res.status(500).json({ error: err.message });
     }
   }
 );
@@ -366,11 +368,11 @@ app.get(
     try {
       const director = await Director.findOne({ Name: name });
       if (!director) {
-        return res.status(404).send("Director not found");
+        return res.status(404).json({ error: "Director not found" });
       }
       res.status(200).json(director);
     } catch (err) {
-      res.status(500).send(err.message);
+      res.status(500).json({ error: err.message });
     }
   }
 );
@@ -402,7 +404,9 @@ app.post(
       !Director ||
       (!ImagePath && !ImageURL)
     ) {
-      return res.status(400).send("All required fields must be provided");
+      return res
+        .status(400)
+        .json({ error: "All required fields must be provided" });
     } else {
       try {
         let imageURL = ImageURL;
