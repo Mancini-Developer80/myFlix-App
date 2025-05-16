@@ -116,13 +116,11 @@ app.get(
 app.post("/users", async (req, res) => {
   let { username, email, password } = req.body;
   if (!username || !email || !password) {
-    return res.status(400).send("All fields are required");
+    return res.status(400).json({ error: "All fields are required" });
   } else {
     try {
-      // Trim whitespace from username and email
       username = username.trim();
       email = email.trim();
-
       const hashedPassword = bcrypt.hashSync(password, 10);
       const newUser = new User({
         username,
@@ -133,7 +131,13 @@ app.post("/users", async (req, res) => {
       const savedUser = await newUser.save();
       res.status(201).json(savedUser);
     } catch (err) {
-      res.status(500).send(err.message);
+      // Handle duplicate key error
+      if (err.code === 11000) {
+        return res
+          .status(409)
+          .json({ error: "Username or email already exists" });
+      }
+      res.status(500).json({ error: err.message });
     }
   }
 });
@@ -276,6 +280,30 @@ app.get(
 );
 
 /**
+ * @name DeleteMovie
+ * @route DELETE /movies/:id
+ * @description Delete a movie by its ID.
+ * @access Private (Admin only, or adjust as needed)
+ * @authentication JWT
+ */
+app.delete(
+  "/movies/:id",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    const { id } = req.params;
+    try {
+      const deletedMovie = await Movie.findByIdAndDelete(id);
+      if (!deletedMovie) {
+        return res.status(404).json({ error: "Movie not found" });
+      }
+      res.status(200).json({ message: "Movie deleted successfully" });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  }
+);
+
+/**
  * @name GetMovieByTitle
  * @route GET /movies/:title
  * @description Retrieve data about a movie by its title.
@@ -393,7 +421,7 @@ app.post(
         res.status(201).json(savedMovie);
       } catch (err) {
         console.error("Error creating new movie:", err.message);
-        res.status(500).send("Internal server error");
+        res.status(500).json({ error: "Internal server error" });
       }
     }
   }
